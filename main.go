@@ -6,12 +6,12 @@ import (
 	"net/http"
 )
 
-func start(port string, appName string, query string) {
-	http.HandleFunc("/health", customHandler(appName, query))
+func Start(port string, appName string, query string) {
+	http.HandleFunc("/health", CustomHandler(appName, query))
 	http.ListenAndServe(port, nil)
 }
 
-func customHandler(appName string, query string) http.HandlerFunc {
+func CustomHandler(appName string, query string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		response, err := http.Get("http://healthcheck-svc.healthcheck.svc.cluster.local/" + appName + "?" + query)
