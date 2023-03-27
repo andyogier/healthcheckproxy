@@ -1,4 +1,4 @@
-package healthcheck
+package main
 
 import (
 	"io"
@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func healthcheck(port string, appName string, query string) {
+func healthcheckproxy(port string, appName string, query string) {
 	http.HandleFunc("/health", customHandler(appName, query))
 	http.ListenAndServe(port, nil)
 }
