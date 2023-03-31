@@ -11,7 +11,7 @@ func main() {
 	var appName = "appNameFromDeploymentYaml"
 	var query = "percentageHealthyPods=80" // Can use percentageHealthyPods or min
 	var namespace = "myAppsNamespace"
-	var port = "80"
+	var port = ":80"
 
 	http.HandleFunc(path, CustomHandler(appName, query, namespace))
 
@@ -24,7 +24,7 @@ func main() {
 func CustomHandler(appName string, query string, namespace string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		response, err := http.Get("http://healthcheck-svc.healthcheck.svc.cluster.local/" + appName + "?" + query + "&" + namespace)
+		response, err := http.Get("http://healthcheck-svc.healthcheck.svc.cluster.local/chkapp/" + appName + "?" + query + "&namespace=" + namespace)
 		if err != nil {
 			log.Fatal(err)
 		}
