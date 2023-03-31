@@ -1,4 +1,4 @@
-package healthcheckproxy
+package main
 
 import (
 	"io"
@@ -6,15 +6,25 @@ import (
 	"net/http"
 )
 
-func Start(port string, appName string, query string) {
-	http.HandleFunc("/health", CustomHandler(appName, query))
-	http.ListenAndServe(port, nil)
+func main() {
+	var path = "/health"
+	var appName = "appNameFromDeploymentYaml"
+	var query = "percentageHealthyPods=80" // Can use percentageHealthyPods or min
+	var namespace = "myAppsNamespace"
+	var port = "80"
+
+	http.HandleFunc(path, CustomHandler(appName, query, namespace))
+
+	err := http.ListenAndServe(port, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
-func CustomHandler(appName string, query string) http.HandlerFunc {
+func CustomHandler(appName string, query string, namespace string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		response, err := http.Get("http://healthcheck-svc.healthcheck.svc.cluster.local/" + appName + "?" + query)
+		response, err := http.Get("http://healthcheck-svc.healthcheck.svc.cluster.local/" + appName + "?" + query + "&" + namespace)
 		if err != nil {
 			log.Fatal(err)
 		}
